@@ -1,3 +1,7 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+from networkx.drawing.nx_pydot import read_dot
+
 class DeBruijnGraph:
     """ A de Bruijn multigraph built from a collection of strings.
         User supplies strings and k-mer length k.  Nodes of the de
@@ -125,6 +129,7 @@ class DeBruijnGraph:
             with weights, instead of writing a separate edge for each
             copy of a k-1-mer. """
         dotFh.write("digraph \"Graph\" {\n")
+        # dotFh.write("digraph {\n")
         dotFh.write("  bgcolor=\"transparent\";\n")
         for node in self.G.keys():
             lab = node.km1mer
@@ -145,19 +150,25 @@ class DeBruijnGraph:
                     dstlab = dst.km1mer
                     dotFh.write("  %s -> %s [label=\"\"] ;\n" % (srclab, dstlab))
         dotFh.write("}\n")
+    
+    def showG(self, dotfile):
+        G_ = nx.Graph(read_dot(dotfile))
+        print(G_.nodes)
+        pos = nx.spectral_layout(G_)
+        nx.draw(G_, pos, with_labels = True)
+        plt.show()
 
-obj = DeBruijnGraph(['AATGCTAGGG'], 5)
+# MAIN
+if __name__=='__main__':
 
-print(obj.G)
-print(obj.nodes)
-f = open("dotfile.txt", 'w')
-obj.toDot(f)
+    fasta = ['GGCAGATTCCCCCTAGACCCGCCCGCACCATGGTCAGGCATGCCCCTCCTCATCGCTGGGCACAGCCCAGA']
+    obj = DeBruijnGraph(fasta, 3)
+    print(obj.G)
+    dotfile = "dotfile.dot"
+    f = open(dotfile, 'w')
+    obj.toDot(f)
+    f.close()
 
-# for n in obj.nodes:
-#     print(n)
+    obj.showG(dotfile)
 
-import graphviz
-
-import networkx as nx
-from networkx.drawing.nx_pydot import read_dot
-G = nx.Graph(read_dot('dotfile.txt'))
+    print(obj.nodes)
