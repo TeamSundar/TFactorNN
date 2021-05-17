@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 from networkx.drawing.nx_pydot import read_dot
+from graphviz import Source
 
 class DeBruijnGraph:
     """ A de Bruijn multigraph built from a collection of strings.
@@ -125,7 +126,7 @@ class DeBruijnGraph:
         
     def toDot(self, dotFh, weights=False):
         """ Write dot representation to given filehandle.  If 'weights'
-            is true, label edges corresponding to distinct k-1-mers
+            is true, label edges corresponding to distinct k-1-mers 
             with weights, instead of writing a separate edge for each
             copy of a k-1-mer. """
         dotFh.write("digraph \"Graph\" {\n")
@@ -151,24 +152,32 @@ class DeBruijnGraph:
                     dotFh.write("  %s -> %s [label=\"\"] ;\n" % (srclab, dstlab))
         dotFh.write("}\n")
     
-    def showG(self, dotfile):
+    def getNxObj(self, dotfile):
         G_ = nx.Graph(read_dot(dotfile))
-        print(G_.nodes)
-        pos = nx.spectral_layout(G_)
-        nx.draw(G_, pos, with_labels = True)
-        plt.show()
+        # print(G_.nodes)
+        # pos = nx.draw_spring(G_)
+        # nx.draw(G_, pos, with_labels = True)
+        # plt.show()
+        return G_
+    
+    def showG(self, dotfile):
+        s = Source.from_file(dotfile)
+        s.view()
+        return None
 
 # MAIN
 if __name__=='__main__':
-
-    fasta = ['GGCAGATTCCCCCTAGACCCGCCCGCACCATGGTCAGGCATGCCCCTCCTCATCGCTGGGCACAGCCCAGA']
-    obj = DeBruijnGraph(fasta, 3)
+    # Make graph
+    fasta = ['GGCAGATTCCCCCTAGACCCGCCCGCACCATGGTCAGGCATGCCCCTCCTCATCGCTGGGCACAGCCCAGACATGCCCCTCCTCATCGCTGGGCACAGTCAGGCATGCCCCTCCTCATCGCTGGGCACAGCCCA']
+    obj = DeBruijnGraph(fasta, 5)
     print(obj.G)
+
+    # Save G as dotfile
     dotfile = "dotfile.dot"
     f = open(dotfile, 'w')
     obj.toDot(f)
     f.close()
 
+    # view graph
     obj.showG(dotfile)
 
-    print(obj.nodes)
