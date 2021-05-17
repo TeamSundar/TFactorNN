@@ -168,8 +168,8 @@ class DeBruijnGraph:
 # MAIN
 if __name__=='__main__':
     # Make graph
-    fasta = ['GGCAGATTCCCCCTAGACCCGCCCGCACCATGGTCAGGCATGCCCCTCCTCATCGCTGGGCACAGCCCAGACATGCCCCTCCTCATCGCTGGGCACAGTCAGGCATGCCCCTCCTCATCGCTGGGCACAGCCCA']
-    obj = DeBruijnGraph(fasta, 5)
+    fasta = ['GGCAGATTCCCCAGCCCAGACATGCCCCTCCTCATCGCTGGGCACAGTCAGGCATGCCCCTCCTCATCGCTGGGCACAGCCCA']
+    obj = DeBruijnGraph(fasta, 3)
     print(obj.G)
 
     # Save G as dotfile
@@ -178,6 +178,13 @@ if __name__=='__main__':
     obj.toDot(f)
     f.close()
 
-    # view graph
-    obj.showG(dotfile)
+    # get adjajancey matrix
+    G_ = obj.getNxObj(dotfile)
+    A = nx.adjacency_matrix(G_)
+    A.setdiag(A.diagonal() * 2)
+    print(A.todense())
+
+    
+    # # view graph
+    # obj.showG(dotfile)
 
