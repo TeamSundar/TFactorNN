@@ -29,8 +29,6 @@ class PROCESS:
                 filename = wget.download(url, out=datapath)
         return None
 
-
-
     def importMetadata(self):
         # Prepare metadata
         metadata = pd.read_csv(self.path+'/metadata.tsv', sep='\t')
@@ -55,7 +53,6 @@ class PROCESS:
     def zip2txt():
         pass
         
-
     def dataSummary(self):
         master_record = self.filterDuplicate()
         for acc in tqdm(master_record['File accession'].values):
